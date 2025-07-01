@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SceneCraft AI - Scene Analyzer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f7f7f7;
+      color: #333;
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+      padding: 1rem;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    pre {
+      background: #fff;
+      padding: 1rem;
+      white-space: pre-wrap;
+      margin-top: 1.5rem;
+      border-left: 5px solid #0066cc;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+  </style>
+</head>
+<body>
+  <h1>🎬 SceneCraft AI - Scene Analyzer</h1>
+  <p>Paste your scene below and click Analyze:</p>
+  
+  <textarea id="sceneText" placeholder="Enter your movie scene here..."></textarea>
+  <br>
+  <button onclick="analyzeScene()">Analyze</button>
+  
+  <pre id="output">Your scene analysis will appear here...</pre>
+
+  <script>
+    async function analyzeScene() {
+      const scene = document.getElementById("sceneText").value;
+      const output = document.getElementById("output");
+      output.textContent = "Analyzing... please wait...";
+
+      try {
+        const response = await fetch("https://sc-new-1-wwtk.onrender.com/analyze", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ scene_text: scene }),
+        });
+
+        const data = await response.json();
+        output.textContent = data.analysis || JSON.stringify(data, null, 2);
+      } catch (error) {
+        output.textContent = "Error: " + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
+
