@@ -42,11 +42,11 @@
 <body>
   <h1>🎬 SceneCraft AI - Scene Analyzer</h1>
   <p>Paste your scene below and click Analyze:</p>
-  
+
   <textarea id="sceneText" placeholder="Enter your movie scene here..."></textarea>
   <br>
   <button onclick="analyzeScene()">Analyze</button>
-  
+
   <pre id="output">Your scene analysis will appear here...</pre>
 
   <script>
@@ -64,13 +64,20 @@
           body: JSON.stringify({ scene_text: scene }),
         });
 
+        console.log("Response status:", response.status);
+
+        if (!response.ok) {
+          const errText = await response.text();
+          throw new Error(`HTTP ${response.status}: ${errText}`);
+        }
+
         const data = await response.json();
         output.textContent = data.analysis || JSON.stringify(data, null, 2);
       } catch (error) {
-        output.textContent = "Error: " + error.message;
+        console.error("❌ Fetch error:", error);
+        output.textContent = "❌ Error: " + error.message;
       }
     }
   </script>
 </body>
 </html>
-
