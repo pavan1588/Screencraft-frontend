@@ -58,10 +58,12 @@
 
             if (!scene || scene.length < 30) {
                 output.innerText = "❗ Please provide a cinematic input with at least 30 characters.";
+                output.style.display = "block";
                 return;
             }
 
-            output.innerText = "🎥 Processing cinematic analysis...";
+            output.innerText = "🎥 Processing cinematic analysis...\nPlease wait.";
+            output.style.display = "block";
             button.disabled = true;
 
             try {
