@@ -2,105 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SceneCraft AI – Scene Analyzer</title>
+  <title>SceneCraft AI - Scene Analyzer</title>
   <style>
     body {
-      font-family: 'Georgia', 'Palatino Linotype', 'Times New Roman', serif;
-      background-color: #f9f9f9;
-      padding: 30px;
-      color: #2c3e50;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f9;
+      margin: 40px;
+      padding: 0;
+      text-align: center;
     }
 
     h1 {
-      text-align: center;
-      font-size: 2em;
-      margin-bottom: 30px;
+      color: #333;
     }
 
     textarea {
-      width: 100%;
-      max-width: 850px;
-      height: 200px;
+      width: 80%;
+      height: 180px;
       font-size: 16px;
-      padding: 15px;
-      margin: 20px auto;
-      display: block;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 10px;
       border: 1px solid #ccc;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      font-family: 'Courier New', monospace;
+      resize: vertical;
     }
 
     button {
-      display: block;
-      margin: 0 auto 20px;
-      padding: 10px 24px;
-      background-color: #1e2b47;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
+      margin-top: 20px;
+      padding: 10px 20px;
       font-size: 16px;
+      border: none;
+      background-color: #5a67d8;
+      color: white;
+      border-radius: 5px;
       cursor: pointer;
     }
 
     button:hover {
-      background-color: #0d1a33;
+      background-color: #434190;
     }
 
     #output {
-      max-width: 900px;
-      margin: 0 auto;
+      margin-top: 30px;
+      background-color: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
       font-size: 17px;
-      line-height: 1.6;
-    }
-
-    pre {
+      font-family: Georgia, 'Times New Roman', Times, serif;
+      color: #222;
+      max-width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
       white-space: pre-wrap;
-      word-wrap: break-word;
-      background-color: #fff;
-      padding: 25px;
-      border-radius: 12px;
-      border-left: 6px solid #34495e;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      font-family: 'Georgia', 'Times New Roman', serif;
-      font-size: 17px;
-    }
-
-    .error {
-      color: #c0392b;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    .loading {
-      text-align: center;
-      font-style: italic;
-      color: #555;
     }
   </style>
 </head>
 <body>
-
-  <h1>🎬 SceneCraft AI – Scene Analyzer</h1>
-
-  <textarea id="sceneInput" placeholder="Paste your cinematic scene, dialogue, or monologue here..."></textarea>
+  <h1>🎬 SceneCraft Analyzer</h1>
+  <textarea id="sceneInput" placeholder="Paste your scene, script, character dialogue or cinematic situation here..."></textarea><br />
   <button onclick="analyzeScene()">Analyze Scene</button>
 
-  <div id="output"></div>
+  <h2>AI Analysis</h2>
+  <div id="output">Your analysis will appear here.</div>
 
   <script>
     async function analyzeScene() {
       const scene = document.getElementById("sceneInput").value.trim();
       const output = document.getElementById("output");
-      output.innerHTML = "";
 
-      if (scene.length < 20) {
-        output.innerHTML = '<p class="error">⚠️ Please enter a valid scene or dialogue (at least 20 characters).</p>';
+      if (!scene || scene.length < 20) {
+        output.innerText = "Please enter a valid cinematic scene, script, dialogue, or character situation.";
         return;
       }
 
-      output.innerHTML = '<p class="loading">🎬 Analyzing your scene with cinematic intelligence...</p>';
+      output.innerText = "Analyzing your scene with cinematic intelligence...";
 
       try {
         const response = await fetch("https://screencraft-backend.onrender.com/analyze", {
@@ -112,16 +89,11 @@
         });
 
         const data = await response.json();
-        if (data.analysis) {
-          output.innerHTML = `<pre>${data.analysis}</pre>`;
-        } else {
-          output.innerHTML = `<p class="error">❌ ${data.detail || "An unexpected error occurred."}</p>`;
-        }
+        output.innerText = data.analysis || data.detail || "Unknown error. Try again.";
       } catch (error) {
-        output.innerHTML = `<p class="error">❌ Server unreachable or backend error.</p>`;
+        output.innerText = "Error connecting to the backend. Please try again.";
       }
     }
   </script>
-
 </body>
 </html>
