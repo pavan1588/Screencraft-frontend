@@ -8,7 +8,7 @@
     body {
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       margin: 40px;
-      background-color: #f2f2f2;
+      background-color: #f9f9f9;
       color: #333;
     }
     textarea {
@@ -64,7 +64,7 @@
         return;
       }
 
-      output.innerText = "🎥 Analyzing your scene with cinematic intelligence...\nPlease wait.";
+      output.innerText = "🎥 Analyzing your scene with cinematic intelligence... Please wait.";
       button.disabled = true;
 
       try {
@@ -80,10 +80,10 @@
         if (data.analysis) {
           output.innerText = data.analysis;
         } else {
-          output.innerText = data.error || "❗ Unexpected response received.";
+          output.innerText = data.error || "❗ An unknown error occurred.";
         }
       } catch (err) {
-        output.innerText = "❗ Unable to contact backend: " + err.message;
+        output.innerText = "❗ Error contacting backend: " + err.message;
       }
 
       button.disabled = false;
