@@ -15,7 +15,7 @@
 
     textarea {
       width: 100%;
-      height: 220px;
+      height: 240px;
       padding: 14px;
       font-size: 16px;
       font-family: 'Courier New', Courier, monospace;
@@ -50,13 +50,23 @@
       font-size: 17px;
       line-height: 1.6;
     }
+
+    h1 {
+      font-size: 32px;
+      color: #007BFF;
+    }
+
+    p {
+      font-size: 17px;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
   <h1>🎬 SceneCraft AI</h1>
-  <p><strong>Paste a cinematic scene, monologue, or script excerpt for analysis:</strong></p>
+  <p><strong>Paste a cinematic scene, monologue, or script excerpt for professional-grade analysis:</strong></p>
 
-  <textarea id="sceneInput" placeholder="Example: INT. LIVING ROOM - NIGHT..."></textarea><br>
+  <textarea id="sceneInput" placeholder="Example: INT. LIVING ROOM – NIGHT..."></textarea><br>
   <button onclick="analyzeScene()" id="analyzeBtn">Analyze</button>
 
   <div id="output"></div>
@@ -72,7 +82,7 @@
         return;
       }
 
-      output.innerText = "🎥 Processing your cinematic analysis...";
+      output.innerText = "🎥 Analyzing your scene with studio-grade precision...";
       button.disabled = true;
 
       try {
