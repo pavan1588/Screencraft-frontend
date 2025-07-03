@@ -3,52 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SceneCraft AI - Cinematic Intelligence</title>
+  <title>SceneCraft AI – Studio-Grade Cinematic Analysis</title>
   <style>
     body {
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       margin: 40px;
-      background-color: #f9f9f9;
-      color: #333;
+      background-color: #f4f4f4;
+      color: #222;
     }
     textarea {
       width: 100%;
-      height: 180px;
-      padding: 12px;
+      height: 200px;
+      padding: 14px;
       font-size: 16px;
       font-family: 'Courier New', Courier, monospace;
-      border-radius: 10px;
-      border: 1px solid #aaa;
+      border-radius: 8px;
+      border: 1px solid #888;
       resize: vertical;
     }
     button {
-      padding: 12px 24px;
+      padding: 12px 28px;
       font-size: 16px;
       border: none;
-      border-radius: 8px;
-      background-color: #007BFF;
+      border-radius: 6px;
+      background-color: #0066cc;
       color: white;
       cursor: pointer;
     }
     button:disabled {
       background-color: #aaa;
+      cursor: not-allowed;
     }
     #output {
       white-space: pre-wrap;
-      margin-top: 20px;
-      padding: 16px;
+      margin-top: 25px;
+      padding: 18px;
       background: #fff;
-      border-left: 5px solid #007BFF;
+      border-left: 4px solid #0066cc;
       border-radius: 6px;
       font-size: 17px;
-      line-height: 1.6;
+      line-height: 1.65;
     }
   </style>
 </head>
 <body>
   <h1>🎬 SceneCraft AI</h1>
-  <p><strong>Paste a cinematic scene, monologue, dialogue, or script excerpt below:</strong></p>
-  <textarea id="sceneInput" placeholder="Write or paste your cinematic content..."></textarea><br><br>
+  <p><strong>Paste your cinematic scene, monologue, dialogue, or script excerpt below:</strong></p>
+
+  <textarea id="sceneInput" placeholder="Paste your cinematic content..."></textarea><br><br>
   <button onclick="analyzeScene()" id="analyzeBtn">Analyze</button>
 
   <div id="output"></div>
@@ -60,11 +62,11 @@
       const button = document.getElementById("analyzeBtn");
 
       if (!scene || scene.length < 30) {
-        output.innerText = "❗ Please provide a cinematic scene with at least 30 characters.";
+        output.innerText = "❗ Please provide a cinematic input of at least 30 characters.";
         return;
       }
 
-      output.innerText = "🎥 Analyzing your scene with cinematic intelligence... Please wait.";
+      output.innerText = "🎥 Running studio-grade cinematic analysis. Please wait...";
       button.disabled = true;
 
       try {
@@ -83,7 +85,7 @@
           output.innerText = data.error || "❗ An unknown error occurred.";
         }
       } catch (err) {
-        output.innerText = "❗ Error contacting backend: " + err.message;
+        output.innerText = "❗ Error connecting to backend: " + err.message;
       }
 
       button.disabled = false;
