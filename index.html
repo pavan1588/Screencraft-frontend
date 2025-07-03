@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>SceneCraft AI - Cinematic Analysis</title>
+    <title>SceneCraft AI - Cinematic Intelligence</title>
     <style>
         body {
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -44,7 +44,7 @@
 </head>
 <body>
     <h1>SceneCraft AI</h1>
-    <p><strong>Enter a scene, dialogue, monologue, or script excerpt below:</strong></p>
+    <p><strong>Paste a cinematic scene, monologue, dialogue, or script excerpt below:</strong></p>
     <textarea id="sceneInput" placeholder="Paste your cinematic content here..."></textarea><br><br>
     <button onclick="analyzeScene()" id="analyzeBtn">Analyze</button>
 
@@ -57,12 +57,12 @@
             const output = document.getElementById("output");
             const button = document.getElementById("analyzeBtn");
 
-            if (!scene) {
-                output.innerText = "❗ Please paste a scene or script to analyze.";
+            if (!scene || scene.length < 30) {
+                output.innerText = "❗ Please provide a valid cinematic input with at least 30 characters.";
                 return;
             }
 
-            output.innerText = "⏳ Analyzing your cinematic input. Please wait...";
+            output.innerText = "⏳ Analyzing your input using cinematic structure and storytelling principles...";
             button.disabled = true;
 
             try {
@@ -78,10 +78,10 @@
                 if (data.analysis) {
                     output.innerText = data.analysis;
                 } else {
-                    output.innerText = data.error || "❗ Unknown error occurred.";
+                    output.innerText = data.error || "❗ Something went wrong with the analysis.";
                 }
             } catch (err) {
-                output.innerText = "❗ Failed to reach backend: " + err.message;
+                output.innerText = "❗ Error contacting backend: " + err.message;
             }
 
             button.disabled = false;
