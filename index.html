@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SceneCraft AI – Studio-Grade Cinematic Analysis</title>
+  <title>SceneCraft AI – Cinematic Intelligence</title>
   <style>
     body {
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       margin: 40px;
-      background-color: #f4f4f4;
+      background-color: #f2f2f2;
       color: #222;
     }
     textarea {
@@ -26,7 +26,7 @@
       font-size: 16px;
       border: none;
       border-radius: 6px;
-      background-color: #0066cc;
+      background-color: #007BFF;
       color: white;
       cursor: pointer;
     }
@@ -39,7 +39,7 @@
       margin-top: 25px;
       padding: 18px;
       background: #fff;
-      border-left: 4px solid #0066cc;
+      border-left: 4px solid #007BFF;
       border-radius: 6px;
       font-size: 17px;
       line-height: 1.65;
@@ -48,7 +48,7 @@
 </head>
 <body>
   <h1>🎬 SceneCraft AI</h1>
-  <p><strong>Paste your cinematic scene, monologue, dialogue, or script excerpt below:</strong></p>
+  <p><strong>Paste a scene, dialogue, monologue, or cinematic excerpt:</strong></p>
 
   <textarea id="sceneInput" placeholder="Paste your cinematic content..."></textarea><br><br>
   <button onclick="analyzeScene()" id="analyzeBtn">Analyze</button>
@@ -66,7 +66,7 @@
         return;
       }
 
-      output.innerText = "🎥 Running studio-grade cinematic analysis. Please wait...";
+      output.innerText = "🎥 Running cinematic analysis...";
       button.disabled = true;
 
       try {
@@ -85,7 +85,7 @@
           output.innerText = data.error || "❗ An unknown error occurred.";
         }
       } catch (err) {
-        output.innerText = "❗ Error connecting to backend: " + err.message;
+        output.innerText = "❗ Backend error: " + err.message;
       }
 
       button.disabled = false;
