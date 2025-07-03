@@ -1,92 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>SceneCraft AI - Cinematic Intelligence</title>
-    <style>
-        body {
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            margin: 40px;
-            background-color: #f2f2f2;
-            color: #333;
-        }
-        textarea {
-            width: 100%;
-            height: 180px;
-            padding: 12px;
-            font-size: 16px;
-            font-family: 'Courier New', Courier, monospace;
-            border-radius: 10px;
-            border: 1px solid #aaa;
-        }
-        button {
-            padding: 12px 24px;
-            font-size: 16px;
-            border: none;
-            border-radius: 8px;
-            background-color: #007BFF;
-            color: white;
-            cursor: pointer;
-        }
-        button:disabled {
-            background-color: #aaa;
-        }
-        #output {
-            white-space: pre-wrap;
-            margin-top: 20px;
-            padding: 16px;
-            background: #fff;
-            border-left: 5px solid #007BFF;
-            border-radius: 6px;
-            font-size: 17px;
-            line-height: 1.6;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SceneCraft AI - Cinematic Intelligence</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      margin: 40px;
+      background-color: #f2f2f2;
+      color: #333;
+    }
+    textarea {
+      width: 100%;
+      height: 180px;
+      padding: 12px;
+      font-size: 16px;
+      font-family: 'Courier New', Courier, monospace;
+      border-radius: 10px;
+      border: 1px solid #aaa;
+      resize: vertical;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #aaa;
+    }
+    #output {
+      white-space: pre-wrap;
+      margin-top: 20px;
+      padding: 16px;
+      background: #fff;
+      border-left: 5px solid #007BFF;
+      border-radius: 6px;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+  </style>
 </head>
 <body>
-    <h1>🎬 SceneCraft AI</h1>
-    <p><strong>Paste a cinematic scene, monologue, dialogue, or script excerpt below:</strong></p>
-    <textarea id="sceneInput" placeholder="Write or paste your scene here..."></textarea><br><br>
-    <button onclick="analyzeScene()" id="analyzeBtn">Analyze</button>
+  <h1>🎬 SceneCraft AI</h1>
+  <p><strong>Paste a cinematic scene, monologue, dialogue, or script excerpt below:</strong></p>
+  <textarea id="sceneInput" placeholder="Write or paste your cinematic content..."></textarea><br><br>
+  <button onclick="analyzeScene()" id="analyzeBtn">Analyze</button>
 
-    <div id="output"></div>
+  <div id="output"></div>
 
-    <script>
-        async function analyzeScene() {
-            const scene = document.getElementById("sceneInput").value.trim();
-            const output = document.getElementById("output");
-            const button = document.getElementById("analyzeBtn");
+  <script>
+    async function analyzeScene() {
+      const scene = document.getElementById("sceneInput").value.trim();
+      const output = document.getElementById("output");
+      const button = document.getElementById("analyzeBtn");
 
-            if (!scene || scene.length < 30) {
-                output.innerText = "❗ Please provide a cinematic input with at least 30 characters.";
-                output.style.display = "block";
-                return;
-            }
+      if (!scene || scene.length < 30) {
+        output.innerText = "❗ Please provide a cinematic scene with at least 30 characters.";
+        return;
+      }
 
-            output.innerText = "🎥 Processing cinematic analysis...\nPlease wait.";
-            output.style.display = "block";
-            button.disabled = true;
+      output.innerText = "🎥 Analyzing your scene with cinematic intelligence...\nPlease wait.";
+      button.disabled = true;
 
-            try {
-                const response = await fetch("https://screencraft-backend.onrender.com/analyze", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ scene })
-                });
+      try {
+        const response = await fetch("https://screencraft-backend.onrender.com/analyze", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ scene })
+        });
 
-                const data = await response.json();
-                if (data.analysis) {
-                    output.innerText = data.analysis;
-                } else {
-                    output.innerText = data.error || "❗ An unknown error occurred.";
-                }
-            } catch (err) {
-                output.innerText = "❗ Error contacting backend: " + err.message;
-            }
-
-            button.disabled = false;
+        const data = await response.json();
+        if (data.analysis) {
+          output.innerText = data.analysis;
+        } else {
+          output.innerText = data.error || "❗ Unexpected response received.";
         }
-    </script>
+      } catch (err) {
+        output.innerText = "❗ Unable to contact backend: " + err.message;
+      }
+
+      button.disabled = false;
+    }
+  </script>
 </body>
 </html>
