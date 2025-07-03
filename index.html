@@ -43,12 +43,12 @@
     </style>
 </head>
 <body>
-    <h1>SceneCraft AI</h1>
-    <p><strong>Paste a cinematic scene, monologue, dialogue, or script excerpt below:</strong></p>
-    <textarea id="sceneInput" placeholder="Paste your cinematic content here..."></textarea><br><br>
+    <h1>🎬 SceneCraft AI</h1>
+    <p><strong>Paste a cinematic scene, monologue, dialogue, or script excerpt below.</strong></p>
+    <textarea id="sceneInput" placeholder="Write or paste a scene or dialogue here..."></textarea><br><br>
     <button onclick="analyzeScene()" id="analyzeBtn">Analyze</button>
 
-    <h2>Analysis Result</h2>
+    <h2>📝 Analysis Result</h2>
     <div id="output"></div>
 
     <script>
@@ -58,11 +58,11 @@
             const button = document.getElementById("analyzeBtn");
 
             if (!scene || scene.length < 30) {
-                output.innerText = "❗ Please provide a valid cinematic input with at least 30 characters.";
+                output.innerText = "❗ Please provide a cinematic input with at least 30 characters.";
                 return;
             }
 
-            output.innerText = "⏳ Analyzing your input using cinematic structure and storytelling principles...";
+            output.innerText = "🎥 Interpreting scene structure, emotional depth, and cinematic elements...";
             button.disabled = true;
 
             try {
