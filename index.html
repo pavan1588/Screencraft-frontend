@@ -7,21 +7,26 @@
   <style>
     body {
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      margin: 40px;
-      background-color: #f7f7f7;
+      margin: 40px auto;
+      max-width: 900px;
+      background-color: #f4f4f4;
       color: #222;
     }
+
     textarea {
       width: 100%;
-      height: 200px;
+      height: 220px;
       padding: 14px;
       font-size: 16px;
       font-family: 'Courier New', Courier, monospace;
-      border-radius: 8px;
-      border: 1px solid #888;
+      border-radius: 10px;
+      border: 1px solid #aaa;
       resize: vertical;
+      background-color: #fff;
     }
+
     button {
+      margin-top: 12px;
       padding: 12px 28px;
       font-size: 16px;
       border: none;
@@ -30,27 +35,28 @@
       color: white;
       cursor: pointer;
     }
+
     button:disabled {
-      background-color: #aaa;
-      cursor: not-allowed;
+      background-color: #888;
     }
+
     #output {
       white-space: pre-wrap;
-      margin-top: 25px;
-      padding: 18px;
+      margin-top: 28px;
+      padding: 20px;
       background: #fff;
-      border-left: 4px solid #007BFF;
-      border-radius: 6px;
+      border-left: 5px solid #007BFF;
+      border-radius: 8px;
       font-size: 17px;
-      line-height: 1.65;
+      line-height: 1.6;
     }
   </style>
 </head>
 <body>
   <h1>🎬 SceneCraft AI</h1>
-  <p><strong>Paste a cinematic scene, monologue, dialogue, or script excerpt below:</strong></p>
+  <p><strong>Paste a cinematic scene, monologue, or script excerpt for analysis:</strong></p>
 
-  <textarea id="sceneInput" placeholder="Paste your cinematic content here..."></textarea><br><br>
+  <textarea id="sceneInput" placeholder="Example: INT. LIVING ROOM - NIGHT..."></textarea><br>
   <button onclick="analyzeScene()" id="analyzeBtn">Analyze</button>
 
   <div id="output"></div>
@@ -66,7 +72,7 @@
         return;
       }
 
-      output.innerText = "🎥 Processing cinematic analysis...";
+      output.innerText = "🎥 Processing your cinematic analysis...";
       button.disabled = true;
 
       try {
@@ -85,7 +91,7 @@
           output.innerText = data.error || "❗ An unknown error occurred.";
         }
       } catch (err) {
-        output.innerText = "❗ Backend error: " + err.message;
+        output.innerText = "❗ Error contacting backend: " + err.message;
       }
 
       button.disabled = false;
