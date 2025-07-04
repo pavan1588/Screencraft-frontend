@@ -73,9 +73,6 @@
   <div id="output"></div>
 
   <script>
-    let authorized = false;
-    let authToken = "";
-
     async function analyzeScene() {
       const scene = document.getElementById("sceneInput").value.trim();
       const output = document.getElementById("output");
@@ -86,14 +83,16 @@
         return;
       }
 
-      if (!authorized) {
+      // Prompt for password if not already stored
+      let authToken = sessionStorage.getItem("authToken");
+      if (!authToken) {
         const input = prompt("🔒 Enter your SceneCraft Access Key:");
         if (!input || !input.startsWith("SCENECRAFT-")) {
           output.innerText = "❌ Invalid or missing access key.";
           return;
         }
         authToken = input;
-        authorized = true;
+        sessionStorage.setItem("authToken", authToken);
       }
 
       output.innerText = "⏳ Processing analysis...";
