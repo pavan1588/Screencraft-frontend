@@ -1,120 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SceneCraft AI – Cinematic Scene Analyzer</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SceneCraft AI – Cinematic Analyzer</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #121212;
-      color: #e0e0e0;
+      color: #E0E0E0;
       margin: 0;
-      padding: 20px;
+      padding: 40px;
+      line-height: 1.6;
     }
-
     h1 {
-      color: #00b4d8;
-      text-align: center;
-      margin-bottom: 10px;
+      font-size: 2rem;
+      color: #00BFA5;
     }
-
     p {
-      text-align: center;
-      color: #bbbbbb;
+      font-size: 1rem;
+      color: #B0BEC5;
     }
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #1e1e1e;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0, 180, 216, 0.2);
-    }
-
     textarea {
       width: 100%;
       height: 200px;
-      padding: 12px;
-      font-size: 16px;
-      font-family: 'Courier New', Courier, monospace;
-      border: 1px solid #555;
+      padding: 16px;
+      font-size: 1rem;
       border-radius: 10px;
-      background-color: #2a2a2a;
-      color: #fff;
+      border: none;
       resize: vertical;
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #1E1E1E;
+      color: #ECEFF1;
     }
-
     button {
-      margin-top: 12px;
+      margin-top: 20px;
       padding: 12px 24px;
-      font-size: 16px;
-      font-weight: bold;
+      font-size: 1rem;
+      background-color: #00BFA5;
+      color: #121212;
       border: none;
       border-radius: 8px;
-      background-color: #00b4d8;
-      color: white;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background-color 0.3s ease;
     }
-
     button:hover {
-      background-color: #0099b6;
+      background-color: #00a891;
     }
-
+    button:disabled {
+      background-color: #455A64;
+      cursor: not-allowed;
+    }
     #output {
-      white-space: pre-wrap;
-      margin-top: 20px;
+      margin-top: 30px;
       padding: 20px;
-      background-color: #222;
-      border-left: 4px solid #00b4d8;
+      background-color: #1E1E1E;
+      border-left: 5px solid #00BFA5;
       border-radius: 8px;
-      font-size: 17px;
-      line-height: 1.6;
-    }
-
-    .loader {
-      border: 6px solid #f3f3f3;
-      border-top: 6px solid #00b4d8;
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto;
-      display: none;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      white-space: pre-wrap;
+      font-size: 1rem;
+      color: #CFD8DC;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎬 SceneCraft AI</h1>
-    <p>Enter your cinematic scene, dialogue, monologue, or script excerpt:</p>
-    <textarea id="sceneInput" placeholder="Paste your cinematic content here..."></textarea>
-    <button onclick="analyzeScene()" id="analyzeBtn">Analyze Scene</button>
-    <div class="loader" id="loader"></div>
-    <div id="output"></div>
-  </div>
+  <h1>🎬 SceneCraft AI</h1>
+  <p>Paste your cinematic scene, dialogue, or script excerpt below:</p>
+  <textarea id="sceneInput" placeholder="Paste your content here..."></textarea>
+  <br>
+  <button onclick="analyzeScene()" id="analyzeBtn">Analyze Scene</button>
+  <div id="output"></div>
 
   <script>
     async function analyzeScene() {
       const scene = document.getElementById("sceneInput").value.trim();
       const output = document.getElementById("output");
       const button = document.getElementById("analyzeBtn");
-      const loader = document.getElementById("loader");
 
       if (!scene || scene.length < 30) {
-        output.innerText = "❗ Please enter a valid cinematic scene or script excerpt (minimum 30 characters).";
+        output.innerText = "❗ Please input at least 30 characters of cinematic content.";
         return;
       }
 
-      output.innerText = "";
-      loader.style.display = "block";
+      output.innerText = "⏳ Processing analysis...";
       button.disabled = true;
 
       try {
@@ -127,19 +95,16 @@
         });
 
         const data = await response.json();
-        loader.style.display = "none";
-        button.disabled = false;
-
         if (data.analysis) {
           output.innerText = data.analysis;
         } else {
-          output.innerText = data.error || "❗ An unknown error occurred during analysis.";
+          output.innerText = data.error || "❗ An unknown error occurred.";
         }
       } catch (err) {
-        loader.style.display = "none";
-        button.disabled = false;
-        output.innerText = "❗ Error connecting to SceneCraft backend: " + err.message;
+        output.innerText = "❗ Error reaching backend: " + err.message;
       }
+
+      button.disabled = false;
     }
   </script>
 </body>
