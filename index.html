@@ -1,86 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SceneCraft AI</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SceneCraft AI – Cinematic Analyzer</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #121212;
+      color: #E0E0E0;
+      margin: 0;
+      padding: 40px;
+      line-height: 1.6;
+    }
+    h1 {
+      font-size: 2rem;
+      color: #00BFA5;
+    }
+    p {
+      font-size: 1rem;
+      color: #B0BEC5;
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+      padding: 16px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      resize: vertical;
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #1E1E1E;
+      color: #ECEFF1;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      background-color: #00BFA5;
+      color: #121212;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #00a891;
+    }
+    button:disabled {
+      background-color: #455A64;
+      cursor: not-allowed;
+    }
+    #output {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #1E1E1E;
+      border-left: 5px solid #00BFA5;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      font-size: 1rem;
+      color: #CFD8DC;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white min-h-screen flex items-center justify-center px-4">
-  <div class="w-full max-w-3xl bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 transition duration-300">
-    <h1 class="text-3xl font-bold mb-6 text-center">🎬 SceneCraft AI</h1>
-    
-    <!-- Password Section -->
-    <div id="password-section" class="space-y-4 mb-6">
-      <input type="password" id="password" placeholder="Enter password to access"
-             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" />
-      <button onclick="unlock()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg font-semibold transition">
-        Unlock
-      </button>
-      <p id="pass-msg" class="text-red-500 text-sm text-center"></p>
-    </div>
-
-    <!-- Main Section -->
-    <div id="main-section" style="display:none;" class="space-y-4">
-      <textarea id="sceneInput" rows="10" placeholder="Paste your scene, dialogue, or monologue..."
-                class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"></textarea>
-      
-      <button onclick="analyzeScene()" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-semibold transition">
-        Analyze Scene
-      </button>
-
-      <div id="result" class="whitespace-pre-wrap p-4 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg mt-4 font-mono text-sm min-h-[100px]">
-        Awaiting your input...
-      </div>
-    </div>
-  </div>
+<body>
+  <h1>🎬 SceneCraft AI</h1>
+  <p>Paste your cinematic scene, dialogue, or script excerpt below:</p>
+  <textarea id="sceneInput" placeholder="Paste your content here..."></textarea>
+  <br>
+  <button onclick="analyzeScene()" id="analyzeBtn">Analyze Scene</button>
+  <div id="output"></div>
 
   <script>
-    const validHash = "c2NlbmVjcmFmdDIwMjU="; // base64 for 'scenecraft2025'
-    const apiKey = "your-api-key-here"; // 🔐 Replace in production
-    const backendUrl = "https://your-backend-url/analyze"; // 🔁 Update with Render URL
-
-    function unlock() {
-      const input = document.getElementById("password").value;
-      const encoded = btoa(input.trim());
-      if (encoded === validHash) {
-        document.getElementById("main-section").style.display = "block";
-        document.getElementById("password-section").style.display = "none";
-      } else {
-        document.getElementById("pass-msg").innerText = "Incorrect password.";
-      }
-    }
-
     async function analyzeScene() {
-      const sceneText = document.getElementById("sceneInput").value.trim();
-      const resultDiv = document.getElementById("result");
+      const scene = document.getElementById("sceneInput").value.trim();
+      const output = document.getElementById("output");
+      const button = document.getElementById("analyzeBtn");
 
-      if (!sceneText || sceneText.length < 20) {
-        resultDiv.innerText = "⚠️ Please enter a valid cinematic input.";
+      if (!scene || scene.length < 30) {
+        output.innerText = "❗ Please input at least 30 characters of cinematic content.";
         return;
       }
 
-      resultDiv.innerText = "⏳ Analyzing scene...";
+      output.innerText = "⏳ Processing analysis...";
+      button.disabled = true;
 
       try {
-        const response = await fetch(backendUrl, {
+        const response = await fetch("https://screencraft-backend.onrender.com/analyze", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            "X-API-Key": apiKey
+            "Content-Type": "application/json"
           },
-          body: JSON.stringify({ scene: sceneText })
+          body: JSON.stringify({ scene })
         });
 
         const data = await response.json();
-        if (data.error) {
-          resultDiv.innerText = "❌ " + data.error;
+        if (data.analysis) {
+          output.innerText = data.analysis;
         } else {
-          resultDiv.innerText = "✅ SceneCraft Analysis:\n\n" + data.analysis;
+          output.innerText = data.error || "❗ An unknown error occurred.";
         }
-      } catch (error) {
-        resultDiv.innerText = "❌ Network error or server unavailable.";
+      } catch (err) {
+        output.innerText = "❗ Error reaching backend: " + err.message;
       }
+
+      button.disabled = false;
     }
   </script>
 </body>
