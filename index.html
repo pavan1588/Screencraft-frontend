@@ -24,7 +24,6 @@ export default function SceneAnalyzer() {
 
     setLoading(true);
     setAnalysis('');
-
     try {
       const res = await fetch('https://screencraft-backend.onrender.com/analyze', {
         method: 'POST',
@@ -49,13 +48,15 @@ export default function SceneAnalyzer() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 p-6 text-gray-800">
-      <div className="max-w-4xl mx-auto space-y-6">
-        <h1 className="text-4xl font-bold text-center text-gray-800">SceneCraft AI</h1>
-        <p className="text-center text-gray-600">Professional cinematic analysis for writers, studios, and creatives</p>
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+      <div className="max-w-3xl mx-auto space-y-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-800">🎬 SceneCraft AI</h1>
+          <p className="text-gray-600 mt-2">Professional cinematic analysis for writers, studios, and creatives</p>
+        </div>
 
-        <Card>
-          <CardContent className="space-y-4 p-6">
+        <Card className="shadow-md border border-gray-200 bg-white">
+          <CardContent className="p-6 space-y-4">
             <Textarea
               value={sceneText}
               onChange={(e) => setSceneText(e.target.value)}
@@ -74,22 +75,33 @@ export default function SceneAnalyzer() {
               className="w-full"
             />
 
-            <Button onClick={handleAnalyze} disabled={loading} className="w-full">
-              {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Analyzing...</> : 'Analyze Scene'}
+            <Button
+              onClick={handleAnalyze}
+              disabled={loading}
+              className="w-full bg-gray-800 hover:bg-gray-700 text-white"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Analyzing...
+                </>
+              ) : (
+                'Analyze Scene'
+              )}
             </Button>
           </CardContent>
         </Card>
 
         {analysis && (
-          <Card>
-            <CardContent className="whitespace-pre-wrap p-6 text-sm leading-relaxed bg-white rounded-md shadow-inner border border-gray-200">
+          <Card className="border border-gray-300 bg-white shadow-inner">
+            <CardContent className="whitespace-pre-wrap p-6 text-sm leading-relaxed text-gray-800">
               {analysis}
             </CardContent>
           </Card>
         )}
 
         <div className="text-sm text-center text-gray-500">
-          {usage > 0 && <p>You have analyzed {usage} scene{usage > 1 && 's'} in this session.</p>}
+          {usage > 0 && <p>You’ve analyzed {usage} scene{usage > 1 && 's'} in this session.</p>}
         </div>
       </div>
     </div>
