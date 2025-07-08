@@ -1,142 +1,139 @@
-import React, { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
-
-export default function SceneAnalyzer() {
-  const [sceneText, setSceneText] = useState('');
-  const [analysis, setAnalysis] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [token, setToken] = useState('');
-  const [usage, setUsage] = useState(0);
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem('scenecraft_token');
-    if (storedToken) setToken(storedToken);
-  }, []);
-
-  const handleAnalyze = async () => {
-    if (!token) return alert('Access token required.');
-    if (sceneText.trim().length < 30) return alert('Please enter a valid cinematic scene.');
-    setLoading(true);
-    setAnalysis('');
-
-    try {
-      const res = await fetch('https://screencraft-backend.onrender.com/analyze', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ scene: sceneText })
-      });
-
-      const data = await res.json();
-      if (res.ok && data.analysis) {
-        setAnalysis(data.analysis);
-        setUsage(prev => prev + 1);
-      } else {
-        alert(data.error || 'Failed to analyze.');
-      }
-    } catch (err) {
-      alert('Server error. Please try again later.');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SceneCraft AI - Cinematic Analyzer</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f5f7;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
-    setLoading(false);
-  };
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: white;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      border-radius: 16px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      color: #222;
+      margin-bottom: 1rem;
+    }
+    textarea, input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      resize: vertical;
+      font-family: inherit;
+    }
+    button {
+      width: 100%;
+      background: #3742fa;
+      color: white;
+      padding: 12px;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:disabled {
+      background: #a4b0be;
+      cursor: not-allowed;
+    }
+    button:hover:not(:disabled) {
+      background: #2f35f0;
+    }
+    .output {
+      white-space: pre-wrap;
+      background: #fafafa;
+      padding: 1.5rem;
+      margin-top: 1rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎬 SceneCraft AI</h1>
+    <textarea id="sceneInput" rows="10" placeholder="Paste your cinematic scene, script excerpt, dialogue, or monologue here..."></textarea>
+    <input type="password" id="accessToken" placeholder="Enter your access token" />
+    <button onclick="analyzeScene()" id="analyzeBtn">Analyze Scene</button>
+    <div id="output" class="output" style="display:none;"></div>
+    <div class="footer" id="usageInfo"></div>
+  </div>
 
-  return (
-    <div style={{
-      fontFamily: 'Segoe UI, sans-serif',
-      background: 'linear-gradient(to right, #f4f4f7, #fdfdfd)',
-      minHeight: '100vh',
-      padding: '2rem',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center'
-    }}>
-      <h1 style={{ fontSize: '2.5rem', fontWeight: 600, marginBottom: '1rem', color: '#222' }}>🎬 SceneCraft AI</h1>
-      <p style={{ color: '#555', marginBottom: '2rem', fontSize: '1rem', maxWidth: '600px', textAlign: 'center' }}>
-        Professional cinematic analysis engine for writers, studios, and creatives.
-      </p>
+  <script>
+    const output = document.getElementById("output");
+    const button = document.getElementById("analyzeBtn");
+    const usageInfo = document.getElementById("usageInfo");
+    let usageCount = 0;
 
-      <div style={{
-        width: '100%',
-        maxWidth: '700px',
-        background: '#fff',
-        borderRadius: '12px',
-        padding: '2rem',
-        boxShadow: '0 0 30px rgba(0,0,0,0.05)',
-        marginBottom: '2rem'
-      }}>
-        <textarea
-          placeholder="Paste your scene, monologue, or script excerpt here..."
-          value={sceneText}
-          onChange={(e) => setSceneText(e.target.value)}
-          rows={10}
-          style={{
-            width: '100%',
-            fontSize: '1rem',
-            padding: '1rem',
-            borderRadius: '8px',
-            border: '1px solid #ccc',
-            resize: 'vertical',
-            marginBottom: '1rem'
-          }}
-        />
+    function analyzeScene() {
+      const scene = document.getElementById("sceneInput").value.trim();
+      const token = document.getElementById("accessToken").value.trim();
 
-        <input
-          placeholder="Enter your access token"
-          value={token}
-          onChange={(e) => {
-            setToken(e.target.value);
-            localStorage.setItem('scenecraft_token', e.target.value);
-          }}
-          style={{
-            width: '100%',
-            fontSize: '1rem',
-            padding: '0.75rem',
-            marginBottom: '1rem',
-            borderRadius: '8px',
-            border: '1px solid #ccc'
-          }}
-        />
+      if (!token) {
+        alert("Access token is required.");
+        return;
+      }
+      if (scene.length < 30) {
+        alert("Please enter a valid cinematic input.");
+        return;
+      }
 
-        <button
-          onClick={handleAnalyze}
-          disabled={loading}
-          style={{
-            width: '100%',
-            backgroundColor: '#222',
-            color: '#fff',
-            fontSize: '1rem',
-            padding: '0.75rem',
-            borderRadius: '8px',
-            border: 'none',
-            cursor: 'pointer'
-          }}
-        >
-          {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Analyzing...</> : 'Analyze Scene'}
-        </button>
-      </div>
+      output.style.display = "none";
+      output.innerText = "";
+      button.disabled = true;
+      button.innerText = "Analyzing...";
 
-      {analysis && (
-        <div style={{
-          width: '100%',
-          maxWidth: '700px',
-          backgroundColor: '#fff',
-          borderRadius: '12px',
-          padding: '2rem',
-          boxShadow: '0 0 30px rgba(0,0,0,0.05)',
-          whiteSpace: 'pre-wrap',
-          lineHeight: 1.6,
-          fontSize: '1rem',
-          color: '#333'
-        }}>
-          {analysis}
-        </div>
-      )}
-
-      <div style={{ marginTop: '1rem', color: '#777' }}>
-        {usage > 0 && <p>You have analyzed {usage} scene{usage > 1 ? 's' : ''} this session.</p>}
-      </div>
-    </div>
-  );
-}
+      fetch("https://screencraft-backend.onrender.com/analyze", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ scene })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.analysis) {
+          output.style.display = "block";
+          output.innerText = data.analysis;
+          usageCount++;
+          usageInfo.innerText = `Scenes analyzed in this session: ${usageCount}`;
+        } else {
+          alert(data.error || "Analysis failed.");
+        }
+      })
+      .catch(() => alert("Server error. Please try again later."))
+      .finally(() => {
+        button.disabled = false;
+        button.innerText = "Analyze Scene";
+      });
+    }
+  </script>
+</body>
+</html>
