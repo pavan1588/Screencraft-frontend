@@ -8,36 +8,36 @@
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      background: linear-gradient(to right, #1e3a8a, #4f46e5);
     }
   </style>
 </head>
-<body class="text-gray-800">
+<body class="text-gray-100">
   <div class="max-w-3xl mx-auto p-6">
     <div class="text-center mb-8">
-      <h1 class="text-4xl font-extrabold text-indigo-700 mb-2">SceneCraft AI</h1>
-      <p class="text-md text-indigo-900">Cinematic Scene Analyzer & Creative Mentor</p>
+      <h1 class="text-4xl font-extrabold text-yellow-400 mb-2">SceneCraft AI</h1>
+      <p class="text-md text-indigo-100">Cinematic Scene Analyzer & Creative Mentor</p>
     </div>
 
     <textarea id="sceneInput" rows="8" placeholder="Paste your scene, script excerpt, dialogue or monologue here..."
-      class="w-full p-4 border border-indigo-300 bg-white shadow-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 mb-4"></textarea>
+      class="w-full p-4 border border-indigo-500 bg-indigo-900 placeholder-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400 mb-4 text-gray-100"></textarea>
 
     <div class="flex flex-col gap-3 mb-4">
-      <input type="text" id="tokenInput" placeholder="Enter access token here"
-        class="w-full p-3 border border-indigo-300 rounded-md bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400">
+      <input type="password" id="tokenInput" placeholder="Enter access token here"
+        class="w-full p-3 border border-yellow-400 bg-indigo-800 placeholder-gray-300 text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400">
 
       <label class="inline-flex items-center">
-        <input type="checkbox" id="agreeCheckbox" class="form-checkbox h-5 w-5 text-indigo-600">
-        <span class="ml-2 text-sm text-indigo-800">I agree to the
-          <a href="https://your-backend-url.onrender.com/terms" target="_blank" class="text-indigo-600 underline">Terms & Conditions</a>
+        <input type="checkbox" id="agreeCheckbox" class="form-checkbox h-5 w-5 text-yellow-400 bg-indigo-700">
+        <span class="ml-2 text-sm text-indigo-100">I agree to the
+          <a href="https://screencraft-backend.onrender.com/terms" target="_blank" class="text-yellow-300 underline">Terms & Conditions</a>
         </span>
       </label>
     </div>
 
     <button onclick="submitScene()"
-      class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-all duration-300">Analyze Scene</button>
+      class="w-full bg-yellow-400 hover:bg-yellow-500 text-indigo-900 font-semibold py-3 px-6 rounded-xl shadow-lg transition-all duration-300">Analyze Scene</button>
 
-    <div id="output" class="mt-6 bg-white border border-indigo-200 rounded-lg p-4 text-sm whitespace-pre-wrap shadow-md hidden"></div>
+    <div id="output" class="mt-6 bg-indigo-800 border border-yellow-400 rounded-lg p-4 text-sm whitespace-pre-wrap shadow-md hidden text-gray-100"></div>
   </div>
 
   <script>
@@ -50,7 +50,7 @@
       outputDiv.innerText = 'Analyzing scene...';
 
       if (!scene || !token || !agreed) {
-        outputDiv.innerText = '⚠️ Please provide a scene, access token, and accept the terms.';
+        outputDiv.innerText = '⚠️ Please enter a valid scene or script, provide access token, and accept the terms.';
         return;
       }
 
@@ -70,7 +70,7 @@
         if (result.error) {
           outputDiv.innerText = '❌ ' + result.error;
         } else if (result.analysis) {
-          outputDiv.innerHTML = `<strong class='text-indigo-600'>Analysis:</strong><br><br>${result.analysis}<br><br><em class='text-xs text-gray-500'>${result.notice}</em>`;
+          outputDiv.innerHTML = `<strong class='text-yellow-300'>Analysis:</strong><br><br>${result.analysis}<br><br><em class='text-xs text-indigo-200'>${result.notice}</em>`;
         } else {
           outputDiv.innerText = 'Unexpected response.';
         }
