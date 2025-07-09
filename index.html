@@ -6,72 +6,59 @@
   <title>SceneCraft – Cinematic Scene Analyzer</title>
   <style>
     body {
-      margin: 0;
       font-family: "Segoe UI", Roboto, sans-serif;
-      background: #f6f8fc;
-      color: #1a1a1a;
+      margin: 0;
+      padding: 0;
+      background: #f0f2f5;
+      color: #222;
     }
 
     header {
-      background: #1e2a38;
+      background: #1f2d3d;
       color: #fff;
       padding: 20px 30px;
       font-size: 1.6em;
       font-weight: bold;
-      text-align: center;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
     }
 
     .container {
       max-width: 900px;
-      margin: 40px auto;
-      background: #ffffff;
-      padding: 30px 40px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       border-radius: 12px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    textarea, input[type="password"] {
+      width: 100%;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      margin-bottom: 20px;
     }
 
     label {
-      display: block;
-      margin: 16px 0 8px;
       font-weight: 600;
-    }
-
-    input[type="password"],
-    textarea {
-      width: 100%;
-      padding: 14px;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      box-sizing: border-box;
-    }
-
-    textarea {
-      resize: vertical;
+      display: block;
+      margin-bottom: 8px;
     }
 
     .checkbox {
-      display: flex;
-      align-items: center;
-      margin: 12px 0 24px;
+      margin-bottom: 20px;
     }
 
     .checkbox input {
       margin-right: 10px;
     }
 
-    .checkbox label {
-      font-weight: normal;
-      font-size: 0.95rem;
-    }
-
     button {
-      background: #2c3e50;
+      background: #1f2d3d;
       color: #fff;
       border: none;
-      padding: 14px 26px;
+      padding: 14px 24px;
       font-size: 1rem;
       border-radius: 8px;
       cursor: pointer;
@@ -79,42 +66,34 @@
     }
 
     button:hover {
-      background: #3d536a;
+      background: #304358;
     }
 
     .output {
-      display: none;
-      white-space: pre-wrap;
-      background: #fefefe;
-      border-left: 4px solid #ffa726;
+      margin-top: 25px;
       padding: 20px;
-      margin-top: 20px;
+      background: #fefefe;
+      border-left: 5px solid #ffa726;
       border-radius: 8px;
       font-family: Georgia, serif;
-      font-size: 1.02rem;
+      white-space: pre-wrap;
       line-height: 1.6;
     }
 
     .footer {
       text-align: center;
-      font-size: 0.85rem;
-      color: #777;
-      margin-top: 60px;
-      padding: 20px;
+      font-size: 0.9em;
+      color: #999;
+      margin-top: 50px;
     }
 
     a {
-      color: #1e88e5;
-      text-decoration: none;
-    }
-
-    a:hover {
+      color: #1f2d3d;
       text-decoration: underline;
     }
   </style>
 </head>
 <body>
-
   <header>🎬 SceneCraft</header>
 
   <div class="container">
@@ -127,16 +106,16 @@
     <div class="checkbox">
       <input type="checkbox" id="terms" />
       <label for="terms">
-        I accept the <a href="/terms" target="_blank">Terms & Conditions</a>, and acknowledge the usage policy and legal disclaimer.
+        I accept the <a href="/terms" target="_blank">Terms & Conditions</a> and acknowledge the usage policy.
       </label>
     </div>
 
     <button onclick="submitScene()">Analyze Scene</button>
 
-    <div id="result" class="output"></div>
+    <div id="result" class="output" style="display:none;"></div>
   </div>
 
-  <div class="footer">© 2025 SceneCraft AI • Educational critique tool only. Analysis does not confirm copyright ownership.</div>
+  <div class="footer">© 2025 SceneCraft AI. Educational critique only.</div>
 
   <script>
     async function submitScene() {
@@ -146,12 +125,12 @@
       const resultDiv = document.getElementById("result");
 
       if (!token || !scene || !agreed) {
-        alert("Please fill in all fields and accept the terms.");
+        alert("Please complete all fields and accept the terms.");
         return;
       }
 
       resultDiv.style.display = "block";
-      resultDiv.textContent = "🔍 Analyzing… please wait...";
+      resultDiv.textContent = "🔍 Analyzing...";
 
       try {
         const res = await fetch("/analyze", {
@@ -163,24 +142,15 @@
           body: JSON.stringify({ scene })
         });
 
-        const contentType = res.headers.get("content-type");
-        let data;
-
-        if (contentType && contentType.includes("application/json")) {
-          data = await res.json();
-        } else {
-          const text = await res.text();
-          throw new Error(text || "Unexpected server response.");
-        }
+        const data = await res.json();
 
         if (data.analysis) {
           resultDiv.textContent = data.analysis;
         } else if (data.error) {
           resultDiv.textContent = "❗ " + data.error;
         } else {
-          resultDiv.textContent = "❌ Unexpected response from server.";
+          resultDiv.textContent = "❌ Unexpected server response.";
         }
-
       } catch (err) {
         resultDiv.textContent = "❌ Error during analysis: " + err.message;
       }
