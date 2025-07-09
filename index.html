@@ -35,6 +35,9 @@
   </div>
 
   <script>
+    // ✅ UPDATE THIS TO MATCH YOUR BACKEND URL (Render or localhost)
+    const API_BASE_URL = "https://screencraft-backend.onrender.com";
+
     const submitButton = document.getElementById("submitButton");
     const sceneInput = document.getElementById("sceneInput");
     const passwordInput = document.getElementById("passwordInput");
@@ -63,7 +66,7 @@
       }
 
       try {
-        const res = await fetch("/analyze", {
+        const res = await fetch(`${API_BASE_URL}/analyze`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -80,12 +83,12 @@
           errorBox.textContent = data.detail || "An error occurred.";
           errorBox.classList.remove("hidden");
         } else {
-          resultBox.textContent = data.analysis + "\n\n" + data.notice;
+          resultBox.textContent = data.analysis + "\n\n" + (data.notice || "");
           resultBox.classList.remove("hidden");
         }
       } catch (err) {
         loading.classList.add("hidden");
-        errorBox.textContent = "Network or server error.";
+        errorBox.textContent = "Network or server error. Please check your connection.";
         errorBox.classList.remove("hidden");
       }
     });
