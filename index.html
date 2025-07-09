@@ -15,9 +15,6 @@
       background-color: #666;
       border-radius: 3px;
     }
-    .hidden-scroll::-webkit-scrollbar {
-      display: none;
-    }
   </style>
 </head>
 
@@ -33,17 +30,10 @@
       <textarea id="scene" rows="12" placeholder="🎥 Paste your cinematic scene, dialogue, or script excerpt here..."
                 class="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-500 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
 
-      <div class="flex space-x-3">
-        <button onclick="analyzeScene()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 transition text-white font-semibold rounded-xl shadow-md hover:shadow-lg tracking-wide">
-          🔍 Analyze Scene
-        </button>
-        <button onclick="copyResult()" class="py-3 px-4 bg-gray-700 hover:bg-gray-600 rounded-xl text-white font-medium">
-          📋 Copy
-        </button>
-        <button onclick="exportPDF()" class="py-3 px-4 bg-green-600 hover:bg-green-700 rounded-xl text-white font-medium">
-          📄 PDF
-        </button>
-      </div>
+      <button onclick="analyzeScene()"
+              class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 transition text-white font-semibold rounded-xl shadow-md hover:shadow-lg tracking-wide">
+        🔍 Analyze Scene
+      </button>
 
       <div id="result"
            class="whitespace-pre-wrap p-4 bg-gray-800 border border-gray-700 rounded-xl mt-4 font-mono text-sm text-gray-100 min-h-[180px] max-h-[480px] overflow-y-auto transition">
@@ -79,28 +69,14 @@
 
         if (data.error) {
           resultDiv.innerText = "❌ " + data.error;
+        } else if (data.analysis) {
+          resultDiv.innerText = "✅ SceneCraft Analysis:\n\n" + data.analysis;
         } else {
-          resultDiv.innerText = "✅ Scene Analysis\n\n" + data.analysis;
+          resultDiv.innerText = "⚠️ No analysis received.";
         }
       } catch (error) {
         resultDiv.innerText = "❌ Server error. Please try again.";
       }
-    }
-
-    function copyResult() {
-      const text = document.getElementById("result").innerText;
-      navigator.clipboard.writeText(text).then(() => {
-        alert("Copied to clipboard!");
-      });
-    }
-
-    function exportPDF() {
-      const text = document.getElementById("result").innerText;
-      const blob = new Blob([text], { type: 'application/pdf' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = "scenecraft-analysis.pdf";
-      link.click();
     }
   </script>
 </body>
