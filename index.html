@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SceneCraft AI</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #1e3a8a, #4f46e5);
+      background: linear-gradient(to right, #1e3a8a, #4f46e5); /* Dark gradient */
     }
   </style>
 </head>
@@ -23,7 +23,7 @@
       class="w-full p-4 border border-indigo-500 bg-indigo-900 placeholder-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-400 mb-4 text-gray-100"></textarea>
 
     <div class="flex flex-col gap-3 mb-4">
-      <input type="password" id="tokenInput" placeholder="Enter access token here"
+      <input type="password" id="tokenInput" placeholder="Enter access token"
         class="w-full p-3 border border-yellow-400 bg-indigo-800 placeholder-gray-300 text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400">
 
       <label class="inline-flex items-center">
@@ -66,13 +66,14 @@
         });
 
         const result = await response.json();
+        console.log(result); // Debug: show result
 
         if (result.error) {
           outputDiv.innerText = '❌ ' + result.error;
         } else if (result.analysis) {
-          outputDiv.innerHTML = `<strong class='text-yellow-300'>Analysis:</strong><br><br>${result.analysis}<br><br><em class='text-xs text-indigo-200'>${result.notice}</em>`;
+          outputDiv.innerHTML = `<strong class='text-yellow-300'>Analysis:</strong><br><br>${result.analysis}<br><br><em class='text-xs text-indigo-200'>${result.notice || ''}</em>`;
         } else {
-          outputDiv.innerText = 'Unexpected response.';
+          outputDiv.innerText = result.detail || '⚠️ Unexpected server response. Please check your scene input or access token.';
         }
       } catch (error) {
         outputDiv.innerText = '❌ Network or server error. Please try again.';
