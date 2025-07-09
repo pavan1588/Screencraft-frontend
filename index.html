@@ -6,92 +6,83 @@
   <title>SceneCraft AI</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col items-center py-10 px-4">
+<body class="bg-gray-50 text-gray-900 font-sans min-h-screen flex flex-col items-center p-6">
 
-  <div class="max-w-3xl w-full bg-white shadow-xl rounded-2xl p-6 space-y-6 border-t-8 border-indigo-700">
-    <h1 class="text-3xl font-bold text-indigo-700 text-center">🎬 SceneCraft AI</h1>
-    <p class="text-sm text-center text-gray-600">Cinematic Analysis for Scriptwriters & Filmmakers</p>
+  <div class="w-full max-w-3xl bg-white p-6 rounded-xl shadow-md">
+    <h1 class="text-3xl font-bold mb-4 text-center text-gray-800">🎬 SceneCraft AI</h1>
+    <p class="text-sm text-gray-600 text-center mb-6">
+      Paste your cinematic scene, monologue, script excerpt, or dialogue for in-depth analysis. No generation allowed.
+    </p>
 
-    <textarea id="sceneInput" rows="10" placeholder="Paste your cinematic scene, dialogue, monologue, or script excerpt here..." class="w-full p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
-
-    <input id="passwordInput" type="password" placeholder="Enter access password" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-
-    <div class="flex items-center space-x-2">
-      <input type="checkbox" id="agreementCheckbox" class="h-4 w-4 text-indigo-600 border-gray-300 rounded" />
-      <label for="agreementCheckbox" class="text-sm text-gray-700">
-        I agree to the <a href="/terms" target="_blank" class="underline text-indigo-600">Terms & Conditions</a> and Usage Policy.
+    <textarea id="sceneInput" rows="10" class="w-full p-3 border rounded-lg focus:ring focus:outline-none mb-4" placeholder="Paste your cinematic scene here..."></textarea>
+    
+    <div class="flex items-center space-x-2 mb-4">
+      <input type="checkbox" id="userAgreement" class="w-4 h-4">
+      <label for="userAgreement" class="text-sm text-gray-700">I agree to the 
+        <a href="https://your-backend-url.onrender.com/terms" target="_blank" class="text-blue-600 underline">Terms & Conditions</a>
       </label>
     </div>
 
-    <button id="submitButton" disabled class="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition">
+    <button onclick="submitScene()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium">
       Analyze Scene
     </button>
 
-    <div id="loading" class="text-center text-sm text-gray-500 hidden">Analyzing... please wait ⏳</div>
+    <p id="loading" class="text-sm text-gray-500 mt-2 hidden">Analyzing scene... please wait.</p>
+    <p id="error" class="text-sm text-red-600 mt-2"></p>
 
-    <div id="resultBox" class="hidden bg-gray-50 border border-gray-300 rounded-lg p-4 whitespace-pre-wrap text-sm text-gray-800"></div>
-
-    <div id="errorBox" class="hidden bg-red-100 text-red-800 border border-red-300 rounded-lg p-3 text-sm"></div>
+    <div id="result" class="mt-6 whitespace-pre-wrap text-gray-800 bg-gray-100 p-4 rounded-lg shadow-inner hidden"></div>
   </div>
 
   <script>
-    // ✅ UPDATE THIS TO MATCH YOUR BACKEND URL (Render or localhost)
-    const API_BASE_URL = "https://screencraft-backend.onrender.com";
+    async function submitScene() {
+      const scene = document.getElementById('sceneInput').value.trim();
+      const agreed = document.getElementById('userAgreement').checked;
+      const errorBox = document.getElementById('error');
+      const resultBox = document.getElementById('result');
+      const loading = document.getElementById('loading');
 
-    const submitButton = document.getElementById("submitButton");
-    const sceneInput = document.getElementById("sceneInput");
-    const passwordInput = document.getElementById("passwordInput");
-    const checkbox = document.getElementById("agreementCheckbox");
-    const resultBox = document.getElementById("resultBox");
-    const errorBox = document.getElementById("errorBox");
-    const loading = document.getElementById("loading");
+      errorBox.textContent = '';
+      resultBox.classList.add('hidden');
+      loading.classList.remove('hidden');
 
-    checkbox.addEventListener("change", () => {
-      submitButton.disabled = !checkbox.checked;
-    });
+      if (!scene || scene.length < 30) {
+        errorBox.textContent = 'Please enter a valid cinematic scene or script excerpt.';
+        loading.classList.add('hidden');
+        return;
+      }
 
-    submitButton.addEventListener("click", async () => {
-      const scene = sceneInput.value.trim();
-      const password = passwordInput.value.trim();
-
-      resultBox.classList.add("hidden");
-      errorBox.classList.add("hidden");
-      loading.classList.remove("hidden");
-
-      if (!scene || !password) {
-        errorBox.textContent = "Please enter both scene and password.";
-        errorBox.classList.remove("hidden");
-        loading.classList.add("hidden");
+      if (!agreed) {
+        errorBox.textContent = 'You must agree to the Terms & Conditions.';
+        loading.classList.add('hidden');
         return;
       }
 
       try {
-        const res = await fetch(`${API_BASE_URL}/analyze`, {
-          method: "POST",
+        const response = await fetch('https://screencraft-backend.onrender.com/analyze', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${password}`,
-            "X-User-Agreement": "true"
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer SCENECRAFT-2024',
+            'x-user-agreement': 'true'
           },
           body: JSON.stringify({ scene })
         });
 
-        const data = await res.json();
-        loading.classList.add("hidden");
-
-        if (!res.ok) {
-          errorBox.textContent = data.detail || "An error occurred.";
-          errorBox.classList.remove("hidden");
+        const data = await response.json();
+        if (data.analysis) {
+          resultBox.textContent = data.analysis + (data.notice ? `\n\n${data.notice}` : '');
+          resultBox.classList.remove('hidden');
+        } else if (data.error) {
+          errorBox.textContent = data.error;
         } else {
-          resultBox.textContent = data.analysis + "\n\n" + (data.notice || "");
-          resultBox.classList.remove("hidden");
+          errorBox.textContent = 'Unexpected response.';
         }
       } catch (err) {
-        loading.classList.add("hidden");
-        errorBox.textContent = "Network or server error. Please check your connection.";
-        errorBox.classList.remove("hidden");
+        errorBox.textContent = 'Server error. Please try again later.';
+      } finally {
+        loading.classList.add('hidden');
       }
-    });
+    }
   </script>
 
 </body>
