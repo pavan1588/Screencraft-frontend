@@ -8,65 +8,80 @@
     body {
       margin: 0;
       font-family: "Segoe UI", Roboto, sans-serif;
-      background: #f5f7fa;
-      color: #222;
+      background: #f0f2f5;
+      color: #1e1e1e;
     }
 
     header {
-      background: #1f2d3d;
+      background: #1e1e2f;
       color: #fff;
       padding: 20px 30px;
-      font-size: 1.5em;
-      letter-spacing: 1px;
+      font-size: 1.8em;
       font-weight: 600;
+      text-align: center;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
     .container {
-      max-width: 900px;
-      margin: 30px auto;
-      background: #fff;
-      padding: 30px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      border-radius: 12px;
+      max-width: 880px;
+      margin: 40px auto;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
     }
 
     textarea, input[type="password"] {
       width: 100%;
-      padding: 14px;
+      padding: 14px 16px;
+      font-size: 1rem;
       border-radius: 8px;
       border: 1px solid #ccc;
       margin-bottom: 20px;
-      font-size: 1rem;
+      font-family: inherit;
       resize: vertical;
     }
 
     label {
-      font-weight: 500;
-      display: block;
+      font-weight: 600;
       margin-bottom: 8px;
+      display: block;
     }
 
     .checkbox {
-      margin: 12px 0 20px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
     }
 
     .checkbox input {
       margin-right: 10px;
     }
 
+    .checkbox a {
+      color: #0077cc;
+      text-decoration: none;
+    }
+
+    .checkbox a:hover {
+      text-decoration: underline;
+    }
+
     button {
-      background: #1f2d3d;
+      background: #0077cc;
       color: #fff;
       border: none;
-      padding: 14px 24px;
+      padding: 14px 26px;
       font-size: 1rem;
       border-radius: 8px;
       cursor: pointer;
+      font-weight: 600;
       transition: background 0.3s ease;
     }
 
     button:hover {
-      background: #304358;
+      background: #005fa3;
     }
 
     .output {
@@ -74,22 +89,29 @@
       background: #fefefe;
       border-left: 4px solid #ffa726;
       padding: 20px;
-      margin-top: 20px;
+      margin-top: 30px;
       border-radius: 8px;
       font-family: "Georgia", serif;
       line-height: 1.6;
+      font-size: 1.05rem;
     }
 
     .footer {
       text-align: center;
-      font-size: 0.9em;
-      color: #999;
+      font-size: 0.85em;
+      color: #666;
       margin-top: 60px;
+    }
+
+    .loading {
+      font-style: italic;
+      color: #999;
     }
   </style>
 </head>
 <body>
-  <header>🎬 SceneCraft</header>
+  <header>🎬 SceneCraft – Cinematic Scene Analyzer</header>
+
   <div class="container">
     <label for="token">Access Token</label>
     <input type="password" id="token" placeholder="Enter your secure access token" />
@@ -99,7 +121,9 @@
 
     <div class="checkbox">
       <input type="checkbox" id="terms" />
-      <label for="terms">I accept the <a href="/terms" target="_blank">Terms & Conditions</a> and acknowledge the usage policy.</label>
+      <label for="terms">
+        I accept the <a href="/terms" target="_blank">Terms & Conditions</a> and <a href="/policy" target="_blank">Usage Policy</a>.
+      </label>
     </div>
 
     <button onclick="submitScene()">Analyze Scene</button>
@@ -107,24 +131,24 @@
     <div id="result" class="output" style="display:none;"></div>
   </div>
 
-  <div class="footer">© 2025 SceneCraft AI. For critique & educational purposes only.</div>
+  <div class="footer">© 2025 SceneCraft AI — For critique & educational use only</div>
 
   <script>
     async function submitScene() {
-      const token = document.getElementById("token").value;
-      const scene = document.getElementById("scene").value;
+      const token = document.getElementById("token").value.trim();
+      const scene = document.getElementById("scene").value.trim();
       const agreed = document.getElementById("terms").checked;
       const resultDiv = document.getElementById("result");
 
       if (!token || !scene || !agreed) {
-        alert("Please complete all fields and accept the terms.");
+        alert("Please fill in all fields and accept the terms.");
         return;
       }
 
-      try {
-        resultDiv.style.display = "none";
-        resultDiv.textContent = "Analyzing...";
+      resultDiv.style.display = "block";
+      resultDiv.textContent = "🔍 Analyzing… please wait...";
 
+      try {
         const res = await fetch("/analyze", {
           method: "POST",
           headers: {
@@ -134,19 +158,23 @@
           body: JSON.stringify({ scene })
         });
 
-        const data = await res.json();
+        let data;
+        try {
+          data = await res.json();
+        } catch (e) {
+          const fallback = await res.text();
+          throw new Error(fallback || "Empty response from server");
+        }
 
         if (data.analysis) {
-          resultDiv.style.display = "block";
           resultDiv.textContent = data.analysis;
         } else if (data.error) {
-          resultDiv.style.display = "block";
           resultDiv.textContent = "❗ " + data.error;
         } else {
-          throw new Error("Unexpected response.");
+          resultDiv.textContent = "❌ Unexpected error.";
         }
+
       } catch (err) {
-        resultDiv.style.display = "block";
         resultDiv.textContent = "❌ Error during analysis: " + err.message;
       }
     }
