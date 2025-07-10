@@ -8,7 +8,7 @@
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #1e3a8a, #4f46e5); /* Dark gradient */
+      background: linear-gradient(to right, #1e3a8a, #4f46e5);
     }
   </style>
 </head>
@@ -66,12 +66,18 @@
         });
 
         const result = await response.json();
-        console.log(result); // Debug: show result
+        console.log(result);
 
         if (result.error) {
           outputDiv.innerText = '❌ ' + result.error;
         } else if (result.analysis) {
-          outputDiv.innerHTML = `<strong class='text-yellow-300'>Analysis:</strong><br><br>${result.analysis}<br><br><em class='text-xs text-indigo-200'>${result.notice || ''}</em>`;
+          outputDiv.innerHTML = `
+            <div>
+              <h2 class='text-yellow-300 font-bold text-lg mb-2'>Analysis:</h2>
+              <div class='whitespace-pre-wrap'>${result.analysis}</div>
+              <br>
+              <em class='text-xs text-indigo-200'>${result.notice || ''}</em>
+            </div>`;
         } else {
           outputDiv.innerText = result.detail || '⚠️ Unexpected server response. Please check your scene input or access token.';
         }
