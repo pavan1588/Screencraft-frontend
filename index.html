@@ -68,10 +68,10 @@
         const result = await response.json();
         console.log(result);
 
-        if (result.error) {
+        if (result.error && result.error.toLowerCase().includes("rewrite")) {
+          outputDiv.innerHTML = `<div class='text-red-300 font-semibold'>❌ SceneCraft does not accept requests to rewrite, regenerate, or compose new scenes. Please submit a valid original cinematic scene for analysis only.</div>`;
+        } else if (result.error) {
           outputDiv.innerText = '❌ ' + result.error;
-        } else if (result.detail && result.detail.includes("SceneCraft does not generate or rewrite scenes")) {
-          outputDiv.innerHTML = `<div class='text-red-300 font-semibold'>⚠️ Output blocked: SceneCraft strictly avoids rewriting or generating content. Please rephrase your input for analysis only.</div>`;
         } else if (result.analysis) {
           outputDiv.innerHTML = `
             <div>
