@@ -4,95 +4,115 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SceneCraft AI</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(to bottom right, #1f2937, #374151);
-      color: #f9fafb;
-    }
-    textarea, input {
-      background-color: #111827;
-      color: #f9fafb;
-    }
-    textarea:focus, input:focus {
-      outline: none;
-      border-color: #4f46e5;
-      box-shadow: 0 0 0 1px #4f46e5;
-    }
-  </style>
 </head>
-<body class="min-h-screen p-6 flex flex-col items-center">
-  <h1 class="text-3xl font-bold mb-6 text-purple-300">🎬 SceneCraft AI</h1>
+<body class="bg-gradient-to-br from-gray-900 to-indigo-900 text-white min-h-screen font-sans">
 
-  <div class="w-full max-w-2xl bg-gray-800 p-6 rounded-lg shadow-xl space-y-4">
-    <label class="block">
-      <span class="text-sm text-gray-400">Access Token</span>
-      <input id="token" type="password" placeholder="Enter your token" class="w-full mt-1 p-2 rounded border border-gray-700" />
-    </label>
+  <div class="max-w-4xl mx-auto py-10 px-6">
+    <h1 class="text-4xl font-extrabold mb-4 text-center">🎬 SceneCraft AI</h1>
+    <p class="text-center text-gray-300 mb-8">Input a valid cinematic scene, script excerpt, dialogue, or monologue for production-ready analysis.</p>
 
-    <label class="block">
-      <span class="text-sm text-gray-400">Paste Your Scene / Script / Dialogue</span>
-      <textarea id="scene" rows="10" placeholder="INT. CAFE – DAY..." class="w-full mt-1 p-2 rounded border border-gray-700"></textarea>
-    </label>
+    <div class="bg-gray-800 rounded-lg p-6 shadow-lg space-y-4">
+      <textarea id="sceneInput" rows="10" class="w-full p-4 bg-gray-700 text-white rounded resize-none focus:outline-none" placeholder="Paste your scene here..."></textarea>
+      
+      <div class="flex items-center space-x-4">
+        <input type="password" id="accessToken" placeholder="Access Token" class="flex-1 px-4 py-2 bg-gray-700 text-white rounded focus:outline-none">
+        <label class="text-sm flex items-center space-x-2">
+          <input type="checkbox" id="agreementCheckbox" />
+          <span>I accept the <a href="/terms" target="_blank" class="underline text-indigo-300">Terms</a></span>
+        </label>
+      </div>
 
-    <label class="inline-flex items-center text-sm text-gray-300">
-      <input id="agreement" type="checkbox" class="mr-2">
-      I agree to the <a href="https://screencraft-backend.onrender.com/terms" target="_blank" class="underline text-blue-300">Terms & Conditions</a>
-    </label>
+      <button onclick="analyzeScene()" class="w-full bg-indigo-600 hover:bg-indigo-700 py-2 rounded font-semibold">
+        Analyze Scene
+      </button>
 
-    <button onclick="submitScene()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded">
-      Analyze Scene
-    </button>
+      <div id="output" class="mt-6 whitespace-pre-wrap text-sm text-gray-200"></div>
+    </div>
 
-    <div id="output" class="whitespace-pre-wrap text-sm text-green-200 mt-4 border-t border-gray-600 pt-4"></div>
+    <!-- Admin Reset (Collapsible) -->
+    <div class="mt-10 bg-gray-800 rounded-lg p-6 shadow-lg">
+      <h2 class="text-xl font-bold mb-2 cursor-pointer" onclick="toggleAdmin()">🔐 Admin – Reset Password</h2>
+      <div id="adminPanel" style="display: none;" class="space-y-4 mt-4">
+        <input type="password" id="adminKey" placeholder="Admin Key" class="w-full px-4 py-2 bg-gray-700 text-white rounded">
+        <input type="text" id="newPassword" placeholder="New Password" class="w-full px-4 py-2 bg-gray-700 text-white rounded">
+        <button onclick="resetPassword()" class="w-full bg-red-600 hover:bg-red-700 py-2 rounded font-semibold">Reset Password</button>
+        <div id="adminResult" class="text-sm text-gray-300 mt-2"></div>
+      </div>
+    </div>
+
+    <footer class="mt-10 text-center text-sm text-gray-500">
+      © 2025 SceneCraft. All rights reserved. | <a href="/terms" class="underline">Terms & Policy</a>
+    </footer>
   </div>
 
   <script>
-    async function submitScene() {
-      const scene = document.getElementById("scene").value.trim();
-      const token = document.getElementById("token").value.trim();
-      const agreement = document.getElementById("agreement").checked;
+    const BACKEND = "https://screencraft-backend.onrender.com";
+
+    async function analyzeScene() {
+      const scene = document.getElementById("sceneInput").value.trim();
+      const token = document.getElementById("accessToken").value.trim();
+      const agreed = document.getElementById("agreementCheckbox").checked;
       const output = document.getElementById("output");
-      output.textContent = "";
 
-      if (!scene || scene.length < 30) {
-        output.textContent = "❗ Please enter a valid cinematic scene, script excerpt, dialogue, or monologue.";
-        return;
-      }
-      if (!token) {
-        output.textContent = "❗ Access token is required.";
-        return;
-      }
-      if (!agreement) {
-        output.textContent = "❗ You must agree to the Terms & Conditions before analyzing.";
+      if (!scene || !token || !agreed) {
+        output.innerHTML = "⚠️ Please enter scene, token, and accept the terms.";
         return;
       }
 
-      output.textContent = "⏳ Analyzing scene...";
-
+      output.innerHTML = "⏳ Analyzing...";
       try {
-        const res = await fetch("https://screencraft-backend.onrender.com/analyze", {
+        const res = await fetch(`${BACKEND}/analyze`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer " + token,
+            "Authorization": `Bearer ${token}`,
             "x-user-agreement": "true"
           },
           body: JSON.stringify({ scene })
         });
-
         const data = await res.json();
         if (res.ok) {
-          output.textContent = data.analysis + (data.notice ? "\n\n" + data.notice : "");
+          output.innerHTML = `🎬 <b>Analysis</b>:\n\n${data.analysis}`;
         } else {
-          output.textContent = "❌ Error: " + (data.detail || data.error || "Unexpected error");
+          output.innerHTML = `❌ ${data.detail || data.error}`;
         }
       } catch (err) {
-        output.textContent = "⚠️ Network error or server unreachable.";
+        output.innerHTML = "❌ Network or server error.";
+      }
+    }
+
+    function toggleAdmin() {
+      const panel = document.getElementById("adminPanel");
+      panel.style.display = panel.style.display === "none" ? "block" : "none";
+    }
+
+    async function resetPassword() {
+      const admin = document.getElementById("adminKey").value.trim();
+      const newPass = document.getElementById("newPassword").value.trim();
+      const resultEl = document.getElementById("adminResult");
+
+      if (!admin || !newPass) {
+        resultEl.innerText = "Please enter both fields.";
+        return;
+      }
+
+      try {
+        const res = await fetch(`${BACKEND}/admin/change-password?admin=${encodeURIComponent(admin)}&new=${encodeURIComponent(newPass)}`, {
+          method: 'POST'
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          resultEl.innerHTML = `<span class="text-green-400">✅ ${data.message}</span>`;
+        } else {
+          resultEl.innerHTML = `<span class="text-red-400">❌ ${data.detail || 'Error occurred.'}</span>`;
+        }
+      } catch (err) {
+        resultEl.innerHTML = `<span class="text-red-400">❌ Network error.</span>`;
       }
     }
   </script>
+
 </body>
 </html>
